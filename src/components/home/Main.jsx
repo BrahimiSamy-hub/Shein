@@ -2,11 +2,14 @@ import shirt from "../../assets/shirt.png";
 import { MdBarcodeReader } from "react-icons/md";
 import { CategoryContext } from "../../context/categoryContext";
 import { ProductContext } from "../../context/productContext";
+import { CartContext } from "../../context/cartContext";
 import { GiClothes } from "react-icons/gi";
 
 import { useContext } from "react";
 const Main = () => {
   const { categories } = useContext(CategoryContext);
+  const { selectedCart, addItemToCart, barcode, handleSetBarcode } =
+    useContext(CartContext);
 
   const { products, setCategoryFilter, categoryFilter } =
     useContext(ProductContext);
@@ -48,7 +51,7 @@ const Main = () => {
             />
             <div>
               <h3 className="text-center">{product.name}</h3>
-              <div className="flex flex-col ">
+              <div className="flex flex-col items-center">
                 <small className="text-center">
                   {product.sellPrice}
                   <sup>
@@ -56,6 +59,12 @@ const Main = () => {
                   </sup>
                 </small>
                 <small className="text-center">{product.barcode}</small>
+                <button
+                  className="border border-lg rounded-lg bg-gray-600 p-2 mb-1 w-20 font-bold hover:opacity-75 text-center"
+                  onClick={() => addItemToCart(selectedCart.client, product)}
+                >
+                  Ajouter
+                </button>
               </div>
             </div>
           </div>
@@ -67,12 +76,15 @@ const Main = () => {
             <MdBarcodeReader size={25} />
           </div>
         </div>
+
         <input
-          type="search"
+          type="text"
+          autoComplete="off"
           id="default-search"
-          className="block w-full p-4 ps-10 text-xl text-gray-900 h-20 rounded bg-[#4f4f4f]   "
+          className="block w-full p-4 ps-10 text-xl text-white h-20 rounded bg-[#4f4f4f]   "
           placeholder="Enter BarCode"
-          required
+          value={barcode}
+          onChange={(e) => handleSetBarcode(e.target.value)}
         />
       </div>
     </section>

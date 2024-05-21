@@ -1,142 +1,100 @@
-import { createContext, useState, useCallback } from "react";
+import { createContext, useState } from "react";
+import axios from "../api/axios";
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [carts, setCarts] = useState([
     {
-      subtotal: 10000,
-      discount: 10,
-      total: 9000,
-      items: [
-        {
-          _id: 1,
-          name: "Denim Jacket",
-          price: 200,
-          quantity: 1,
-        },
-        {
-          _id: 2,
-          name: "Denim Jacket",
-          price: 200,
-          quantity: 1,
-        },
-      ],
-    },
-    {
-      subtotal: 5000,
+      subtotal: 0,
       discount: 0,
-      total: 5000,
-      items: [
-        {
-          _id: 1,
-          name: "Denim Jacket2",
-          price: 200,
-          quantity: 1,
-        },
-        {
-          _id: 2,
-          name: "Denim Jacket2",
-          price: 200,
-          quantity: 1,
-        },
-      ],
+      total: 0,
+      items: [],
     },
   ]);
 
-  // Add item to a specific cart
-  const addItemToCart = useCallback((cartIndex, product) => {
+  const [selectedCart, setSelectedCart] = useState({ ...carts[0], client: 0 });
+  const [barcode, setBarcode] = useState("");
+
+  const updateSelectedCart = (cartIndex, updatedItems) => {
+    if (selectedCart.client === cartIndex) {
+      setSelectedCart((prevSelectedCart) => ({
+        ...prevSelectedCart,
+        items: updatedItems,
+      }));
+    }
+  };
+
+  const addItemToCart = (cartIndex, product) => {
     setCarts((prevCarts) => {
-      const existingCart = prevCarts[cartIndex] || [];
-      const itemIndex = existingCart.findIndex(
+      const newCarts = [...prevCarts];
+      const existingItems = newCarts[cartIndex].items;
+      const itemIndex = existingItems.findIndex(
         (item) => item._id === product._id
       );
+
       if (itemIndex > -1) {
-        const newCart = [...existingCart];
-        newCart[itemIndex] = {
-          ...newCart[itemIndex],
-          quantity: newCart[itemIndex].quantity + 1,
+        existingItems[itemIndex] = {
+          ...existingItems[itemIndex],
+          quantity: existingItems[itemIndex].quantity + 1,
         };
-        return [
-          ...prevCarts.slice(0, cartIndex),
-          newCart,
-          ...prevCarts.slice(cartIndex + 1),
-        ];
       } else {
-        const newCart = [...existingCart, { ...product, quantity: 1 }];
-        return [
-          ...prevCarts.slice(0, cartIndex),
-          newCart,
-          ...prevCarts.slice(cartIndex + 1),
-        ];
+        existingItems.push({ ...product, quantity: 1 });
       }
-    });
-  }, []);
 
-  // Remove item from a specific cart
-  const removeItemFromCart = useCallback((cartIndex, productId) => {
+      updateSelectedCart(cartIndex, existingItems);
+      return newCarts;
+    });
+  };
+
+  const handleSetBarcode = async (barcode) => {
+    setBarcode(barcode);
+    if (barcode.length === 13) {
+      try {
+        const response = await axios.get(`/products/single?barcode=${barcode}`);
+        if (response.status === 200) {
+          const product = response.data;
+          addItemToCart(selectedCart.client, product);
+        }
+        setBarcode("");
+      } catch (error) {
+        setBarcode("");
+        console.error("Error fetching products:", error);
+      }
+    }
+  };
+
+  const removeItemFromCart = (cartIndex, productId) => {
     setCarts((prevCarts) => {
-      const existingCart = prevCarts[cartIndex];
-      const itemIndex = existingCart.findIndex(
-        (item) => item._id === productId
+      const newCarts = [...prevCarts];
+      const updatedItems = newCarts[cartIndex].items.filter(
+        (item) => item._id !== productId
       );
-      if (itemIndex > -1 && existingCart[itemIndex].quantity > 1) {
-        const newCart = [...existingCart];
-        newCart[itemIndex] = {
-          ...newCart[itemIndex],
-          quantity: newCart[itemIndex].quantity - 1,
-        };
-        return [
-          ...prevCarts.slice(0, cartIndex),
-          newCart,
-          ...prevCarts.slice(cartIndex + 1),
-        ];
-      } else {
-        const newCart = existingCart.filter((item) => item._id !== productId);
-        return [
-          ...prevCarts.slice(0, cartIndex),
-          newCart,
-          ...prevCarts.slice(cartIndex + 1),
-        ];
-      }
-    });
-  }, []);
+      newCarts[cartIndex].items = updatedItems;
 
-  // Delete item from a specific cart
-  const deleteItemFromCart = useCallback((cartIndex, productId) => {
-    setCarts((prevCarts) => {
-      const existingCart = prevCarts[cartIndex];
-      const newCart = existingCart.filter((item) => item._id !== productId);
-      return [
-        ...prevCarts.slice(0, cartIndex),
-        newCart,
-        ...prevCarts.slice(cartIndex + 1),
-      ];
+      updateSelectedCart(cartIndex, updatedItems);
+      return newCarts;
     });
-  }, []);
+  };
 
-  const createNewCart = useCallback(() => {
-    setCarts((prevCarts) => {
-      return [
-        ...prevCarts,
-        {
-          items: [],
-          subtotal: 0,
-          discount: 0,
-          total: 0,
-        },
-      ];
-    });
-  }, []);
+  const createNewCart = () => {
+    setCarts((prevCarts) => [
+      ...prevCarts,
+      {
+        items: [],
+        subtotal: 0,
+        discount: 0,
+        total: 0,
+      },
+    ]);
+  };
 
-  const deleteCart = useCallback((cartIndex) => {
-    setCarts((prevCarts) => {
-      return [
-        ...prevCarts.slice(0, cartIndex),
-        ...prevCarts.slice(cartIndex + 1),
-      ];
-    });
-  }, []);
+  const deleteCart = (cartIndex) => {
+    setCarts((prevCarts) => [
+      ...prevCarts.slice(0, cartIndex),
+      ...prevCarts.slice(cartIndex + 1),
+    ]);
+  };
 
   return (
     <CartContext.Provider
@@ -144,9 +102,12 @@ export const CartProvider = ({ children }) => {
         carts,
         addItemToCart,
         removeItemFromCart,
-        deleteItemFromCart,
         createNewCart,
         deleteCart,
+        selectedCart,
+        setSelectedCart,
+        barcode,
+        handleSetBarcode,
       }}
     >
       {children}

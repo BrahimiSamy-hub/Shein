@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.jpg";
 import { FaTruckFront } from "react-icons/fa6";
-
+import { useContext } from "react";
+import { UserContext } from "../context/userContext";
 const Sidebar = () => {
+  const { logout } = useContext(UserContext);
   return (
     <nav className="flex flex-col justify-between p-6 min-h-screen w-20 ">
       <Link to="/">
@@ -22,7 +24,7 @@ const Sidebar = () => {
         </li>
       </ul>
       {/* <span>dsd</span> */}
-      <i className="flex justify-center items-center">
+      <i className="flex justify-center items-center" onClick={logout}>
         <svg
           width="35"
           height="35"

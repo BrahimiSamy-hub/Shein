@@ -5,22 +5,30 @@ import { CategoryProvider } from "./context/categoryContext";
 import { ArrivalProvider } from "./context/arrivalContext";
 import { ProductProvider } from "./context/productContext";
 import { CartProvider } from "./context/cartContext";
+import { UserProvider } from "./context/userContext";
+import { OrderProvider } from "./context/orderContext";
+import Login from "./pages/Login";
 
 const App = () => {
   return (
     <Router>
-      <CartProvider>
-        <ArrivalProvider>
-          <CategoryProvider>
-            <ProductProvider>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/arrivals" element={<Arrivals />} />
-              </Routes>
-            </ProductProvider>
-          </CategoryProvider>
-        </ArrivalProvider>
-      </CartProvider>
+      <UserProvider>
+        <CartProvider>
+          <OrderProvider>
+            <ArrivalProvider>
+              <CategoryProvider>
+                <ProductProvider>
+                  <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/" element={<Home />} />
+                    <Route path="/arrivals" element={<Arrivals />} />
+                  </Routes>
+                </ProductProvider>
+              </CategoryProvider>
+            </ArrivalProvider>
+          </OrderProvider>
+        </CartProvider>
+      </UserProvider>
     </Router>
   );
 };

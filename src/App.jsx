@@ -3,6 +3,7 @@ import Home from '../src/pages/Home'
 import Arrivals from '../src/pages/Arrivals'
 import Login from './pages/Login'
 import Categories from './pages/Categories'
+import Products from './pages/Products'
 import { CategoryProvider } from './context/categoryContext'
 import { ArrivalProvider } from './context/arrivalContext'
 import { ProductProvider } from './context/productContext'
@@ -20,14 +21,15 @@ const App = () => {
             <OrderProvider>
               <ArrivalProvider> */}
         <CategoryProvider>
-          {/* <ProductProvider> */}
-          <Routes>
-            {/* <Route path='/login' element={<Login />} />
+          <ProductProvider>
+            <Routes>
+              {/* <Route path='/login' element={<Login />} />
           <Route path='/' element={<Home />} />
           <Route path='/arrivals' element={<Arrivals />} /> */}
-            <Route path='/categories' element={<Categories />} />
-          </Routes>
-          {/* </ProductProvider> */}
+              <Route path='/categories' element={<Categories />} />
+              <Route path='/products' element={<Products />} />
+            </Routes>
+          </ProductProvider>
         </CategoryProvider>
         {/* </ArrivalProvider>
             </OrderProvider>

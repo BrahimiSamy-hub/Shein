@@ -29,18 +29,9 @@ export const CartProvider = ({ children }) => {
     setCarts((prevCarts) => {
       const newCarts = [...prevCarts];
       const existingItems = newCarts[cartIndex].items;
-      const itemIndex = existingItems.findIndex(
-        (item) => item._id === product._id
-      );
 
-      if (itemIndex > -1) {
-        existingItems[itemIndex] = {
-          ...existingItems[itemIndex],
-          quantity: existingItems[itemIndex].quantity + 1,
-        };
-      } else {
-        existingItems.push({ ...product, quantity: 1 });
-      }
+      // Add a new item without checking for existing products
+      existingItems.push({ ...product });
 
       updateSelectedCart(cartIndex, existingItems);
       return newCarts;
@@ -49,7 +40,7 @@ export const CartProvider = ({ children }) => {
 
   const handleSetBarcode = async (barcode) => {
     setBarcode(barcode);
-    if (barcode.length === 13) {
+    if (barcode.length === 9) {
       try {
         const response = await axios.get(`/products/single?barcode=${barcode}`);
         if (response.status === 200) {

@@ -31,7 +31,7 @@ const SideOrder = () => {
                 deleteCart(selectedCart.client);
                 setSelectedCart({ ...carts[0], client: 0 });
               }}
-              className=" p-1hover:cursor-pointer"
+              className="p-1 hover:cursor-pointer"
             >
               <IoIosCloseCircle size={70} color="red" />
             </span>
@@ -58,12 +58,11 @@ const SideOrder = () => {
                   />
                 </div>
                 <div className="flex gap-2">
-                  <span>{item.quantity}</span>
                   <h3 className="h7">{item.name}</h3>
                 </div>
                 <div>
                   <span>
-                    {item.sellPrice * item.quantity}
+                    {item.sellPrice}
                     <sup>
                       <small>DA</small>
                     </sup>
@@ -79,7 +78,7 @@ const SideOrder = () => {
             <h3 className="h3">Subtotal</h3>
             <span>
               {selectedCart.items.reduce(
-                (acc, item) => acc + item.sellPrice * item.quantity,
+                (acc, item) => acc + item.sellPrice,
                 0
               )}
               <sup>
@@ -95,10 +94,10 @@ const SideOrder = () => {
             </span>
           </div>
           <div className="flex justify-between">
-            <h3 className="h3">total</h3>
+            <h3 className="h3">Total</h3>
             <span>
               {selectedCart.items.reduce(
-                (acc, item) => acc + item.sellPrice * item.quantity,
+                (acc, item) => acc + item.sellPrice,
                 0
               ) *
                 (1 - selectedCart.discount / 100)}
@@ -124,7 +123,7 @@ const SideOrder = () => {
         <ul className="">
           <li
             onClick={createNewCart}
-            className="flex  justify-center items-center w-24 h-24 border rounded-full border-gray-500 hover:cursor-pointer"
+            className="flex justify-center items-center w-24 h-24 border rounded-full border-gray-500 hover:cursor-pointer"
           >
             <FaPlus size={50} />
           </li>
@@ -139,10 +138,7 @@ const SideOrder = () => {
               <div className="flex flex-col gap-1 items-center text-center font-bold p-1">
                 <h2 className="h6">Client {index + 1}</h2>
                 <span>
-                  {cart.items.reduce(
-                    (acc, item) => acc + item.sellPrice * item.quantity,
-                    0
-                  )}
+                  {cart.items.reduce((acc, item) => acc + item.sellPrice, 0)}
                   <sup className="ml-1">
                     <small>DA</small>
                   </sup>

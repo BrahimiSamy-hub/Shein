@@ -25,11 +25,11 @@ const Table = () => {
             <div className="col-span-1">{dateFormat(arrival.date)}</div>
             <div className="col-span-1">{arrival.quantity}</div>
             <div className="col-span-1">{arrival.numBoxes}</div>
-            <div className="col-span-1">{arrival.category.name}</div>
+            <div className="col-span-1">{arrival.category?.name}</div>
             <div className="col-span-2">
               {arrival.items.map((item) => (
                 <div key={item._id} className="my-1">
-                  {item.quantity} {item.category.name}
+                  {item.quantity} {item.category?.name}
                 </div>
               ))}
             </div>

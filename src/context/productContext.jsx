@@ -34,6 +34,7 @@ export const ProductProvider = ({ children }) => {
   // Add a product
   const addProduct = async (product) => {
     try {
+      console.log(product);
       const response = await axios.post("/products", product);
       setProducts([response.data, ...products]);
     } catch (error) {
@@ -42,11 +43,11 @@ export const ProductProvider = ({ children }) => {
   };
 
   // Update a product
-  const updateProduct = async (id, updatedProduct) => {
+  const updateProduct = async (product) => {
     try {
-      const response = await axios.put(`/products/${id}`, updatedProduct);
+      const response = await axios.put(`/products/${product._id}`, product);
       setProducts(
-        products.map((arr) => (arr._id === id ? response.data : arr))
+        products.map((arr) => (arr._id === product._id ? response.data : arr))
       );
     } catch (error) {
       console.error("Error updating product:", error);
@@ -56,7 +57,7 @@ export const ProductProvider = ({ children }) => {
   // Delete a product
   const deleteProduct = async (id) => {
     try {
-      await axios.delete(`/products/${id}`);
+      await axios.put(`/products/${id}`, { isDrafted: true });
       setProducts(products.filter((arr) => arr._id !== id));
     } catch (error) {
       console.error("Error deleting product:", error);

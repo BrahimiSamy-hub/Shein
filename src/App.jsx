@@ -11,6 +11,7 @@ import { CartProvider } from "./context/cartContext";
 import { UserProvider } from "./context/userContext";
 import { OrderProvider } from "./context/orderContext";
 import { ToastProvider } from "./context/toastContext";
+import { ProductsTabProvider } from "./context/productsTabContext";
 
 const App = () => {
   return (
@@ -22,13 +23,15 @@ const App = () => {
               <ArrivalProvider>
                 <CategoryProvider>
                   <ProductProvider>
-                    <Routes>
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/" element={<Home />} />
-                      <Route path="/arrivals" element={<Arrivals />} />
-                      <Route path="/categories" element={<Categories />} />
-                      <Route path="/products" element={<Products />} />
-                    </Routes>
+                    <ProductsTabProvider>
+                      <Routes>
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/" element={<Home />} />
+                        <Route path="/arrivals" element={<Arrivals />} />
+                        <Route path="/categories" element={<Categories />} />
+                        <Route path="/products" element={<Products />} />
+                      </Routes>
+                    </ProductsTabProvider>
                   </ProductProvider>
                 </CategoryProvider>
               </ArrivalProvider>
